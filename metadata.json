@@ -1,0 +1,43 @@
+{
+  "symbols": [
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "JPM",
+    "XOM",
+    "SPY",
+    "TSLA",
+    "AMZN"
+  ],
+  "interval": "hour",
+  "start_date": "2023-01-01",
+  "end_date": "2024-01-01",
+  "columns": [
+    "timestamp",
+    "symbol",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "sma_10",
+    "sma_50",
+    "ema_20",
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "volatility_20",
+    "target_up_next"
+  ],
+  "target_threshold": 0.0005,
+  "total_records": 11202,
+  "unique_symbols": 8,
+  "date_range": {
+    "start": "2023-01-03 09:00:00+00:00",
+    "end": "2023-12-18 18:00:00+00:00"
+  },
+  "generated_on": "2025-11-04T19:46:05.585030+00:00",
+  "source": "Publicly available financial market data (2023), aggregated and preprocessed to include technical indicators and binary movement labels.",
+  "description": "Hourly stock prices with technical indicators for 2023-2024"
+}
