@@ -2,8 +2,11 @@
 Analyzing hourly stock data to locate potential trading edges using an iron condor options strategy  
 
 # Data Set Information
-Data is sourced via Kaggle by user geowtt: https://www.kaggle.com/datasets/geowtt/hourly-stock-prices-technical-indicators-2023
-Dataset follows a Attribution 4.0 International License, as described here: https://creativecommons.org/licenses/by/4.0
+Data is sourced via Kaggle by user geowtt: https://www.kaggle.com/datasets/geowtt/hourly-stock-prices-technical-indicators-2023  
+
+Dataset follows a Attribution 4.0 International License, as described here: https://creativecommons.org/licenses/by/4.0  
+
+---
 
 As described on Kaggle by geowtt: 
 
