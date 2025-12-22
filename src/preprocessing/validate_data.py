@@ -7,20 +7,22 @@ import stock_data_loader
 
 
 class ValidationError(Exception):
-    """Table has a validation error."""
+    """df has a validation error."""
     pass
 
 
 
-# Check if the 'timestamp' column exists in the table schema & is of format string
 def validate_timestamp(df):
     
+    if "timestamp_hourly" not in df.columns:
+        raise ValidationError("df does not contain a 'timestamp_hourly' column")
+
+    if "timestamp_daily" not in df.columns:
+        raise ValidationError("df does not contain a 'timestamp_daily' column")
+
     return df
-
-
-
 
 
 df = stock_data_loader.load_data()
 
-print(validate_timestamp(df=df))
+print(df.columns.tolist())
