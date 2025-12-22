@@ -1,3 +1,11 @@
+"""
+Convert raw CSV data to Parquet format and save it as processed for overwriting.
+
+NOTE: This script will overwrite the existing processed data file if it already exists; 
+    ONLY run this script if you are sure that you want to overwrite the existing processed data file & reset the processed information.
+"""
+
+
 import pandas as pd
 import numpy as np
 import pyarrow as pa
