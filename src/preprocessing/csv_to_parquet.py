@@ -20,7 +20,7 @@ csv_file_path = 'data/raw/underlying/hourly_stock_prices_technical_indicators.cs
 df = pd.read_csv(csv_file_path)
 
 table = pa.Table.from_pandas(df)
-parquet_file_path = 'data/processed/underlying/hourly_stock_prices_technical_ind.parquet'
+parquet_file_path = 'data/raw/underlying/RAW_hourly_stock_prices_technical_indicators.parquet'
 pq.write_table(table, parquet_file_path)
 
 print(f"Converted {csv_file_path} to {parquet_file_path}")
