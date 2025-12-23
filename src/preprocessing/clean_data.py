@@ -7,9 +7,7 @@ import pandas as pd
 sys.path.insert(0, "src/loaders")  # add loaders path to search list
 import load_parquet
 
-# Access & convert parquet file
-table = load_parquet.load_data()
-df = table.to_pandas()
+
 
 
 """
@@ -100,6 +98,12 @@ def clean_data(df, symbol="SPY"):
 """
 if __name__ == "__main__":
     print("TESTING CLEAN_DATA FUNCTION:  \n \n # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # \n")
+
+    PARQUETE_PATH = "data/raw/underlying/RAW_hourly_stock_prices_technical_indicators.parquet"
+
+    # Access & convert parquet file
+    table = load_parquet.load_data(path=PARQUETE_PATH)
+    df = table.to_pandas()
     
     df = clean_data(df, symbol="spy")
 
