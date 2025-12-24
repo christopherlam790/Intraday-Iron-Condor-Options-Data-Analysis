@@ -1,5 +1,5 @@
 """
-Docstring for analyze.analyze_target_up_next
+# Break down hourly threshold movements
 """
 import sys
 
@@ -36,6 +36,7 @@ def target_up_hours_percent(df):
     target_by_hour = df.groupby('timestamp_hour_est')['target_up_next'].agg(['mean', 'count'])
     target_by_hour.columns = ['Ups %','Total Records']
     target_by_hour['Ups %'] = target_by_hour['Ups %'] * 100
+    
 
     return target_by_hour
 
@@ -114,6 +115,6 @@ if __name__ == "__main__":
     table = load_parquet.load_data("data/processed/underlying/CLEANED_hourly_stock_prices_technical_indicators.parquet")
     df = table.to_pandas()
 
-    print(combined_target_percent(df, threshold=0.0025))
+    print(combined_target_percent(df, threshold=0.0005))
 
 

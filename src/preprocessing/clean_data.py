@@ -76,6 +76,11 @@ def remove_redundant_columns(df):
     
     return df
 
+def simplify_cols(df):
+    df = df.drop(columns=['sma_10', 'sma_50', 'ema_20', 'rsi_14', 'macd', 'macd_signal', 'macd_hist', 'volatility_20', 'target_up_next'])
+ 
+    return df
+
 
 """
 # Clean the data by applying all the above functions
@@ -92,6 +97,11 @@ def clean_data(df, symbol="SPY"):
     
     return df
 
+def minimized_clean_data(df, symbol="SPY"):
+    df = clean_data(df, symbol="SPY")
+    df = df.drop(columns=['sma_10', 'sma_50', 'ema_20', 'rsi_14', 'macd', 'macd_signal', 'macd_hist', 'volatility_20', 'target_up_next', 'timestamp_day_est', 'timestamp_hour_est'])
+
+    return df
 
 """
 # Main function to test the clean_data function
@@ -107,4 +117,15 @@ if __name__ == "__main__":
     
     df = clean_data(df, symbol="spy")
 
+    print(" \n \n # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # \n \n STANDARD CLEAN")
+
     print(df.head())
+    
+    print(" \n \n # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # \n \n MINIMIZEED CLEAN")
+
+    df = table.to_pandas() 
+    df = minimized_clean_data(df, symbol="spy")
+    
+    print(df)
+    
+    print(" \n \n # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # \n \nTESTING COMPLETE")

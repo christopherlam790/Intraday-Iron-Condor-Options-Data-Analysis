@@ -159,11 +159,17 @@ def validate_rsi_range(df):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 """
+# Validate core cols (symbol and OHLCV) present
+"""
+def validate_columns_existence_minimized(df):
+    validate_single_symbol(df)
+    validate_OHLCV_existence(df)
+
+"""
 # Validate existence of all cols
 """
 def validate_columns_existence(df):
-    validate_single_symbol(df)
-    validate_OHLCV_existence(df)
+    validate_columns_existence_minimized(df)
     validate_moving_averages_existence(df)
     validate_rsi_existence(df)
     validate_macd_existence(df)
@@ -172,7 +178,7 @@ def validate_columns_existence(df):
     validate_timestamp_existence(df)
     
     return
-       
+ 
 def validate_columns_correctness(df):
     validate_timestamp_within_market_hours(df)
     validate_target_up_next_is_binary(df)
@@ -193,6 +199,9 @@ def validate_data(df):
     
     return
 
+def validate_data_minimized(df):
+    validate_columns_existence_minimized(df)
+    return
 
 
 
