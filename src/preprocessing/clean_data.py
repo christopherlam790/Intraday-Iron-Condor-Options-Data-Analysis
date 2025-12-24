@@ -99,7 +99,7 @@ def clean_data(df, symbol="SPY"):
 
 def minimized_clean_data(df, symbol="SPY"):
     df = clean_data(df, symbol="SPY")
-    df = df.drop(columns=['sma_10', 'sma_50', 'ema_20', 'rsi_14', 'macd', 'macd_signal', 'macd_hist', 'volatility_20', 'target_up_next', 'timestamp_day_est', 'timestamp_hour_est'])
+    df = df.drop(columns=['sma_10', 'sma_50', 'ema_20', 'rsi_14', 'macd', 'macd_signal', 'macd_hist', 'volatility_20', 'target_up_next'])
 
     return df
 

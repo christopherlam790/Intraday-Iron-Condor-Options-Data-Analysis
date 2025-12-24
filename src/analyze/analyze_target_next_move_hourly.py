@@ -112,7 +112,7 @@ def combined_target_percent(df, threshold=0.0005):
 # Testing
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 if __name__ == "__main__":
-    table = load_parquet.load_data("data/processed/underlying/CLEANED_hourly_stock_prices_technical_indicators.parquet")
+    table = load_parquet.load_data("data/processed/underlying/MINIMIZED_CLEANED_hourly_stock_prices_technical_indicators.parquet")
     df = table.to_pandas()
 
     print(combined_target_percent(df, threshold=0.0005))
