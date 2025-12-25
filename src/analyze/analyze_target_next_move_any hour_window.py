@@ -175,7 +175,7 @@ def save_to_parquet(stack):
 # Testing
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 if __name__ == "__main__":
-    stack = generate_all_target_moves(threshold=0.002)
+    stack = generate_all_target_moves(threshold=0.0045)
     
     view_stack(stack=stack)
     save_to_parquet(stack)
