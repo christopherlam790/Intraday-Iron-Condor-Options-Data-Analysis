@@ -15,97 +15,116 @@ import numpy as np
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Up target funcs
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-"""
-# Binary target: 1 if next hour close ≥ {threshold}% higher 
-"""
-def target_up_hours(df, threshold=0.0005):
-    df["target_up_next"] = (
-    df["close"].shift(-1) >= df["close"] * (1 + threshold)
-    ).astype(int)
-
-    return df
-"""
-# Calculates percent occurence higher than {threshold} by hour across all data
-
-"""
-def target_up_hours_percent(df):
-    # Target distribution per symbol
-    target_by_hour = df.groupby('timestamp_hour_est')['target_up_next'].agg(['mean', 'count'])
-    target_by_hour.columns = ['Ups %','Total Records']
-    target_by_hour['Ups %'] = target_by_hour['Ups %'] * 100
-    
-
-    return target_by_hour
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Down target funcs
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
-"""
-# Binary target: 1 if next hour close ≥ {threshold}% lower 
-"""
-def target_down_hours(df, threshold=0.0005):
-    df["target_down_next"] = (
-    df["close"].shift(-1) <= df["close"] * (1 - threshold)
-    ).astype(int)
-
-    return df
-"""
-# Calculates percent occurence lower than {threshold} by hour across all data
-
-"""
-def target_down_hours_percent(df):
-    # Target distribution per symbol
-    target_by_hour = df.groupby('timestamp_hour_est')['target_down_next'].agg(['mean', 'count'])
-    target_by_hour.columns = ['Downs %','Total Records']
-    target_by_hour['Downs %'] = target_by_hour['Downs %'] * 100
-
-    return target_by_hour
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# In between target funcs
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-"""
-# Calculates percent occurence in between {threshold} by hour across all data
-"""
-def target_in_between_percent(df, threshold=0.0005):
-    df_up = target_up_hours_percent(target_up_hours(df,threshold=threshold))
-    df_down = target_down_hours_percent(target_down_hours(df, threshold=threshold))
-
-    return 100 - df_up["Ups %"] - df_down["Downs %"]
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Combined target funcs
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-"""
-# Aggregates by hour percentage report
-"""
-def combined_target_percent(df, threshold=0.0005):
-    df_up = target_up_hours_percent(target_up_hours(df, threshold=threshold))
-    df_down = target_down_hours_percent(target_down_hours(df, threshold=threshold))
-    df_in_between = target_in_between_percent(df, threshold=threshold)
 
-    combined_merged_df = pd.merge(df_up, df_down, left_index=True, right_index=True)
+def target_direction_hours(df, threshold=0.0005):
+    df = df.sort_values(
+        ["symbol", "timestamp_day_est", "timestamp_hour_est"]
+    ).reset_index(drop=True)
+
+    next_close = (
+        df.groupby(["symbol", "timestamp_day_est"])["close"]
+          .shift(-1)
+    )
+
+    up = next_close >= df["close"] * (1 + threshold)
+    down = next_close <= df["close"] * (1 - threshold)
+
+    df["target_dir_next"] = np.select(
+        [up, down],
+        [1, -1],
+        default=0
+    )
+
+    return df
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Clean final hour (16)
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+def clean_final_hour(df):
+    df.loc[df["timestamp_hour_est"] == 15, "target_dir_next"] = np.nan
+ 
+    df.loc[df["timestamp_hour_est"] == 16, "target_dir_next"] = np.nan
     
-    combined_merged_df["In Between %"] = df_in_between
-    combined_merged_df["Sanity Check"] = combined_merged_df["Ups %"] + combined_merged_df["Downs %"] + combined_merged_df["In Between %"]
+    return df.dropna()
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+def hourly_target_frequencies(df, target_col="target_dir_next"):
+    """
+    Returns normalized frequency of target values by hour.
+    """
+    return (
+        df
+        .dropna(subset=[target_col])
+        .groupby("timestamp_hour_est")[target_col]
+        .value_counts(normalize=True)
+        .unstack()
+        .sort_index()
+    )
+
+def hourly_sample_counts(df, target_col="target_dir_next"):
+    return (
+        df
+        .dropna(subset=[target_col])
+        .groupby("timestamp_hour_est")[target_col]
+        .count()
+    )
+
+def hourly_directional_probs(df, target_col="target_dir_next"):
+
+    # Remove invalid rows (e.g., hour 16)
+    df_valid = df.dropna(subset=[target_col])
+
+    # Compute normalized counts (probabilities) per hour
+    hourly_probs = (
+        df_valid.groupby("timestamp_hour_est")[target_col]
+        .value_counts(normalize=True)   # proportion of each class
+        .unstack(fill_value=0)          # make -1,0,1 columns
+        .sort_index()
+    )
+
+    # Optional: rename columns for clarity
+    hourly_probs = hourly_probs.rename(columns={-1: "p_down", 0: "p_flat", 1: "p_up"})
+
+    return hourly_probs
+
+def hourly_directional_bias(df, target_col="target_dir_next"):
+    return (
+        df
+        .dropna(subset=[target_col])
+        .groupby("timestamp_hour_est")[target_col]
+        .mean()
+    )
+
+def binomial_ci(p, n, z=1.96):
+    return z * np.sqrt(p * (1 - p) / n)
+
+def hourly_stat_summary(df):
+    counts = hourly_sample_counts(df)
+    probs = hourly_directional_probs(df)
+
+    summary = probs.join(counts.rename("n"))
+    summary["ci"] = binomial_ci(summary["p_up"], summary["n"])
     
+    summary["bias"] = hourly_directional_bias(df) 
 
-    """
-    # Clean up unused cols
-    """
-    def clean_up(df):
-        df = df.drop(columns=['Total Records_x', 'Total Records_y'])
-        return df
+    return summary
 
-    combined_merged_df = clean_up(combined_merged_df)
-
-    return combined_merged_df
-
+def hourly_analysis(df):
+    results = {
+        "frequency_table": hourly_target_frequencies(df),
+        "sample_counts": hourly_sample_counts(df),
+        "directional_probs": hourly_directional_probs(df),
+        "directional_bias": hourly_directional_bias(df),
+        "stat_summary": hourly_stat_summary(df),
+    }
+    return results
 
 
 # # # # # # # # # # # 
@@ -114,7 +133,21 @@ def combined_target_percent(df, threshold=0.0005):
 if __name__ == "__main__":
     table = load_parquet.load_data("data/processed/underlying/MINIMIZED_CLEANED_hourly_stock_prices_technical_indicators.parquet")
     df = table.to_pandas()
+    
+    df = target_direction_hours(df, threshold=.0015)
+    
+    df = clean_final_hour(df)
+    
+    results = hourly_analysis(df)
+    
+    print(results["stat_summary"])
 
-    print(combined_target_percent(df, threshold=0.0005))
+
+
+    
+    
+    
+    
+
 
 
