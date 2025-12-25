@@ -1,0 +1,11 @@
+Analyze
+================
+
+- Analyze volume
+- Calculate & Analyze volatility ?
+
+Visualize
+==============
+- Chart target_next parquets
+- Chart volume parquets
+- Chart volatility parquets ?
