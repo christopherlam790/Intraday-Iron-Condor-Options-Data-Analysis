@@ -2,4 +2,5 @@ numpy
 pandas
 sys
 pyarrow
-
+matplotlib
+seaborn
