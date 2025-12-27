@@ -7,7 +7,7 @@ sys.path.insert(0, "src/loaders")  # add loaders path to search list
 import load_parquet
 
 
-if __name__ == "__main__":
+def visualize_charts(): 
     
     for block in range(1, 7):        
         for threshold in [0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.004, 0.0045]:
@@ -48,3 +48,10 @@ if __name__ == "__main__":
             
             plt.savefig(f"data/charts/target_next_move/CLEANED_FIG_{block}_block_size_{threshold}_threshold_target_next_move.png")
             plt.show()
+                        
+    return
+
+
+if __name__ == "__main__":
+    save_and_visualize_charts()
+    

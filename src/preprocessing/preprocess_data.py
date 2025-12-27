@@ -54,7 +54,9 @@ def minimized_preprocess_data(csv_file_path,raw_data_path, cleaned_data_path):
 """
 # Tester function
 
-"""
+"""    
+
+
 if __name__ == "__main__":
     
     print("TESTTING preprocess_data.py \n \n # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #")
