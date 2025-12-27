@@ -53,5 +53,5 @@ def visualize_charts():
 
 
 if __name__ == "__main__":
-    save_and_visualize_charts()
+    visualize_charts()
     
